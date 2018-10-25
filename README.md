@@ -36,3 +36,4 @@ brackets can also be used to ensure that the expression inside the brackets will
 - [ ] MathML style image equation generated from input expression
 - [ ] generate boolean expression from truth table (via minterms/product of sums of whatever)
 - [ ] _cool idea_ natural language parsing - natural language text to boolean expression - e.g. `"it is cold and raining" = p * q where p = "it is raining" and q = "it is cold"`
+

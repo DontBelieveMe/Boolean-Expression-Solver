@@ -1,5 +1,6 @@
 #include "parser.h"
 #include "expression.h"
+#include "table.h"
 
 #include <iostream>
 
@@ -12,7 +13,7 @@ int main(int argc, char** argv) {
 			system("cls");
 			continue;
 		}
-		else if (expression == "exit" || expression == "quit") {
+		else if (expression == "exit" || expression == "quit" || expression.empty()) {
 			exit(0);
 		}
 

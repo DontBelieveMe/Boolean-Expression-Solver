@@ -18,8 +18,8 @@ namespace bl {
 		parser & m_parser;
 
 		dictionary<char, int> m_input_lookup;
-		flex_array<flex_array<bool>> m_inputs;
-		flex_array<bool> m_outputs;
+		flex_array<flex_array_bool> m_inputs;
+		flex_array_bool m_outputs;
 		int m_currentindex;
 	};
 }

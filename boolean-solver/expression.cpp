@@ -1,46 +1,39 @@
 #include "expression.h"
+#include "table.h"
 
 #include <algorithm>
 #include <assert.h>
 #include <cmath>
+#include <iostream>
 
 using namespace bl;
 
-static int number_of_bits_needed_for_number(int num) {
-	if (num == 0) return 0;
-	int count = 32;
-
-	// https://stackoverflow.com/questions/8991024/find-out-how-many-binary-digits-a-particular-integer-has
-	for (int i = 1 << 31; i != 0; i >>= 1, count--)
-		if ((num & i) != 0)
-			break;
-
-	return count;
-}
-
-static flex_array<bool> number_to_binary(int num, int bits_to_fill) {
-	flex_array<bool> bools;
+static flex_array_bool number_to_binary(int num, int bits_to_fill) {
+	flex_array_bool bools;
 	bools.resize(bits_to_fill);
 
 	for (int i = 0; i < bits_to_fill; i++) {
-		int b = (num & (1 << i)) >> i;
+		int b = (num >> i) & 1;
 		bool bb = b != 0;
 		bools[i] = bb;
 	}
 
 	return bools;
 }
-
 expression::expression(parser& parser) :
 	m_parser(parser), m_currentindex(0) {
 	ast_node *expr_node = parser.generate_ast();
 	
 	auto inputs = parser.get_inputs();
 	
+	bl::table truth_table;
+
 	size_t n = inputs.size();
 	for (size_t i = 0; i < n; ++i) {
 		m_input_lookup[inputs[i]] = i;
+		truth_table.add_column(string(1, inputs[i]));
 	}
+	truth_table.add_column("answer");
 
 	int s = static_cast<int>(std::pow(2, inputs.size()));
 	for (int i = 0; i < s; ++i) {
@@ -48,26 +41,21 @@ expression::expression(parser& parser) :
 	}
 
 	for (int i = 0; i < s; ++i) {
-		m_outputs.push_back(visit(expr_node));
+		table::row& row = truth_table.add_row();
+		for (auto& pair : m_input_lookup) {
+			bool b = m_inputs[m_currentindex][m_input_lookup[pair.first]];
+			row[string(1, pair.first)] = b;
+		}
+			
+		row["answer"] = visit(expr_node);
 		m_currentindex++;
 	}
 
-	// output
-	printf("| ");
-	for (char c : inputs) {
-		printf("%c ", c);
-	}
-	printf("|   |\n| ");
-	int dashes_num = inputs.size() * 2 + 5;
-	for (int i = 0; i < dashes_num; i++)printf("-");
-	printf("\n");
-	for (int i = 0; i < s; i++) {
-		auto& inputs = m_inputs[i];
-		printf("| ");
-		for (size_t j = 0; j < inputs.size(); ++j) {
-			printf("%i ", inputs[j] ? 1 : 0);
+	for (const table::row& row : truth_table.rows()) {
+		for (const table_value& v : row.cols()) {
+			std::cout << table_value_cast<bool>(v) << " ";
 		}
-		printf("| %i |\n", m_outputs[i] ? 1 : 0);
+		std::cout << std::endl;
 	}
 }
 
