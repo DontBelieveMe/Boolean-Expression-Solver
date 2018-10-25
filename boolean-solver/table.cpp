@@ -3,7 +3,11 @@
 using namespace bl;
 
 void table::add_column(const string& header) {
-	m_headers[header] = m_headers.size();
+	m_headers.push_back(header);
+}
+
+const flex_array<string>& table::headers() const {
+	return m_headers;
 }
 
 table::row& table::add_row() {

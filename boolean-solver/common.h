@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
-
+#include <map>
 namespace bl {
 	typedef std::string string;
 	
@@ -14,7 +14,7 @@ namespace bl {
 	using dictionary = std::unordered_map<T, U>;
 
 	template <typename T, typename U>
-	using ordered_dictionary = std::unordered_map<T, U>;
+	using ordered_dictionary = std::map<T, U>;
 
 	// goddammit std::vector<bool>...
 	// for the uninitiated (or sensible and logical thinkers) this may be confusing

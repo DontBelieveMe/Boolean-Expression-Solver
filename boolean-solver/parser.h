@@ -76,11 +76,17 @@ namespace bl {
 			return m_inputs;
 		};
 
+		bool has_error(const char** err) { *err = m_haserr ? m_err : nullptr; return m_haserr; }
+
 	private:
 		token get_next_token();
 		ast_node* parse_factor();
-		void eat_token(token_type type);
+		bool eat_token(token_type type, char c=0);
 
+		const char* m_err;
+		bool m_haserr;
+
+		void clear_error() { memset((void*)m_err, 0, strlen(m_err)); m_haserr = false; }
 	private:
 		const char* m_expression;
 		token m_currentoken;

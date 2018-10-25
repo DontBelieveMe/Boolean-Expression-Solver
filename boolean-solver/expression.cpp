@@ -24,6 +24,13 @@ expression::expression(parser& parser) :
 	m_parser(parser), m_currentindex(0) {
 	ast_node *expr_node = parser.generate_ast();
 	
+	const char* c;
+
+	if (parser.has_error(&c)) {
+		std::cout << c << std::endl;
+		return;
+	}
+
 	auto inputs = parser.get_inputs();
 	
 	bl::table truth_table;
@@ -51,12 +58,9 @@ expression::expression(parser& parser) :
 		m_currentindex++;
 	}
 
-	for (const table::row& row : truth_table.rows()) {
-		for (const table_value& v : row.cols()) {
-			std::cout << table_value_cast<bool>(v) << " ";
-		}
-		std::cout << std::endl;
-	}
+	truth_table_pretty_printer<bool, std::ostream> printer(std::cout);
+	printer.final_row_alignment = align::right;
+	printer.print(truth_table);
 }
 
 bool expression::visit(ast_node * node) {
